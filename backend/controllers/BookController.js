@@ -1,3 +1,7 @@
+const connectToMongo = require("../config/connection");
+
+const { db } = connectToMongo();
+
 // Data sementara sebagai pengganti database
 let books = [
     { id: 1, title: 'JavaScript for Beginners', author: 'John Doe' },
@@ -7,9 +11,11 @@ let books = [
   
   // Fungsi untuk mendapatkan semua buku
   function getAllBooks(req, res) {
+
+    const hasil  = db.collections("books").find().toArray();
     res.status(200).json({
       message: 'List of all books',
-      data: books
+      data: hasil
     });
   }
   
