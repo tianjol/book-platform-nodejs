@@ -6,16 +6,12 @@ const {
     updateBook,
     deleteBook
 }    = require("./controllers/BookController");
+
 const app      = express();
 const PORT     = process.env.PORT || 3000;
 
 
 app.use(express.json());
-
-// app.post("/submit", function(req, res){
-//     const { body, params, query } = req;
-//     return res.status(200).json(req.body);
-// });
 
 app.get("/", function(req, res) {
     res.send("Selamat datang di API Buku Versi 1.0");
