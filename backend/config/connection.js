@@ -1,5 +1,5 @@
 const { MongoClient } = require("mongodb");
-const client = new MongoClient("mongodb://root:@localhost:27017/digitalbooks?authSource=admin");
+const client = new MongoClient(process.env.DB_STRING_CONNECTION);
 
 async function connectToMongo() {
     try {
