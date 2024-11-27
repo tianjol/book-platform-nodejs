@@ -21,7 +21,7 @@ app.get("/api/buku", getAllBooks);
 app.post("/api/buku", createBook);
 app.get("/api/buku/:id", getDetail);
 app.delete("/api/buku/:id", deleteBook);
-app.put("/api/buku/:id", updateBook);
+app.put("/api/buku/:author", updateBook);
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
