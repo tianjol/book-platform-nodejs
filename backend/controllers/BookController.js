@@ -119,53 +119,49 @@ async function updateBook_(req, res) {
 
 async function updateBook(req, res) {
   try {
-    const { author } = req.params; // Get author from URL params (or req.body if it comes from body)
+    const { id } = req.params; // Get `id` from URL params (this should be the numeric `id` field)
     const { newTitle, newAuthor } = req.body; // Data to update (new title, new author)
-    console.log(author);
-    // Check if `author` and `newTitle` / `newAuthor` are provided
-    if (!author || !newTitle || !newAuthor) {
+
+    console.log('ID received from params:', id);
+    console.log('New Title:', newTitle);
+    console.log('New Author:', newAuthor);
+
+    // Validate inputs
+    if (!id || !newTitle || !newAuthor) {
       return res.status(400).json({
-        error: "Author, newTitle, and newAuthor are required"
+        error: "ID, newTitle, and newAuthor are required"
       });
     }
 
     const { db } = await connectToMongo();
     const booksCollection = db.collection('books');
     
-    // Log the received author and data
-    console.log('Author received:', author);
-    console.log('New Title:', newTitle);
-    console.log('New Author:', newAuthor);
-
-    // Perform the update by searching with the author
+    // Perform the update by searching with the `id` field
     const result = await booksCollection.findOneAndUpdate(
-      { author: author },  // Query by author
+      { id: parseInt(id) },  // Query by `id` field (parse as integer if it's a numeric field)
       { $set: { title: newTitle, author: newAuthor } }, // Update title and author
       { returnDocument: 'after' } // Ensure we get the document after the update
     );
 
-    // Log the result to see what was returned
     console.log('Update result:', result);
 
     // Check if the document was found and updated
-    if (result._id) {
-      // Successful update
+    if (result.id) {
       res.status(200).json({
-        message: `Book by author "${author}" updated successfully`,
+        message: `Book with ID ${id} updated successfully`,
         data: result.value
       });
     } else {
-      // If no book was found with that author
       res.status(404).json({
-        error: `No book found by author "${author}"`
+        error: `No book found with ID ${id}`
       });
     }
   } catch (error) {
-    // Catch any other errors
     console.error('Error updating book:', error);
     res.status(500).json({ message: 'Error updating book', error: error.message });
   }
 }
+
 
 
 
