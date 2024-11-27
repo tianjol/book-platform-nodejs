@@ -19,7 +19,7 @@ app.get("/", function(req, res) {
 
 app.get("/api/buku", getAllBooks);
 app.post("/api/buku", createBook);
-app.post("/api/buku/:id", getDetail);
+app.get("/api/buku/:id", getDetail);
 app.delete("/api/buku/:id", deleteBook);
 app.put("/api/buku/:id", updateBook);
 
