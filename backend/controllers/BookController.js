@@ -119,7 +119,7 @@ async function updateBook_(req, res) {
 
 async function updateBook(req, res) {
   try {
-    const { id } = req.params; // Get `id` from URL params (this should be the numeric `id` field)
+    const { id } = req.params; // Get `id` from URL params
     const { newTitle, newAuthor } = req.body; // Data to update (new title, new author)
 
     console.log('ID received from params:', id);
@@ -127,19 +127,31 @@ async function updateBook(req, res) {
     console.log('New Author:', newAuthor);
 
     // Validate inputs
-    if (!id || !newTitle || !newAuthor) {
+    if (!id) {
       return res.status(400).json({
-        error: "ID, newTitle, and newAuthor are required"
+        error: "ID is required"
       });
     }
 
     const { db } = await connectToMongo();
     const booksCollection = db.collection('books');
-    
+
+    // Prepare the update object, only including fields that are provided
+    const updateFields = {};
+    if (newTitle) updateFields.title = newTitle;   // Add `title` if provided
+    if (newAuthor) updateFields.author = newAuthor; // Add `author` if provided
+
+    // If neither title nor author is provided, return an error
+    if (Object.keys(updateFields).length === 0) {
+      return res.status(400).json({
+        error: "At least one of newTitle or newAuthor is required to update"
+      });
+    }
+
     // Perform the update by searching with the `id` field
     const result = await booksCollection.findOneAndUpdate(
       { id: parseInt(id) },  // Query by `id` field (parse as integer if it's a numeric field)
-      { $set: { title: newTitle, author: newAuthor } }, // Update title and author
+      { $set: updateFields }, // Dynamically update fields
       { returnDocument: 'after' } // Ensure we get the document after the update
     );
 
@@ -161,6 +173,7 @@ async function updateBook(req, res) {
     res.status(500).json({ message: 'Error updating book', error: error.message });
   }
 }
+
 
 
 
